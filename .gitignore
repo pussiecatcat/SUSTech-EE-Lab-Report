@@ -1,0 +1,27 @@
+# Local experiments and generated deliverables
+work/
+outputs/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+Thumbs.db
+~$*
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+
+# Compilation intermediates
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+
+# Generated archives
+*.zip

@@ -1,0 +1,4 @@
+interface:
+  display_name: "南科大电子系实验报告"
+  short_description: "可选模板与中英文，支持排版、撰写及数据处理到报告检查的完整流程"
+  default_prompt: "使用 $sustech-ee-lab-report 处理我提供的实验材料，先确认未明确的模板、语言、工作模式和交付格式，可编辑源文件可选，最后提供可自由填写的 Other。"
