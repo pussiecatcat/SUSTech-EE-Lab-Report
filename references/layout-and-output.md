@@ -10,7 +10,7 @@
 4. **PDF + Typst**：附 .typ 源工程及构建所需资源。
 5. **Other（自行输入）**：允许填写其他格式或组合，例如 Markdown（.md）、HTML（.html）、多种源格式，或只要某种源文件。
 
-使用自带自由输入/Other 的询问工具时，只提交前四项为选项，使用工具自带的自由输入入口；不要再塞入一个无法填写的 Other 选项。文本询问时，将“Other（请填写）”列在最后并接收用户的自由文本。已有明确要求不再询问，同一报告补充材料时沿用选择。
+询问入口的具体处理（Other 必须可填写、不要在选项数组里重复塞一个填不了的标签、工具限制问题数时如何分组）见 [SKILL.md 的入口说明](../SKILL.md)。已有明确要求不再询问；同一报告补充材料、或同一门课程的后续实验，沿用已确认的选择。
 
 课程强制提交源文件而用户选择仅 PDF 时，指出具体冲突并请用户决定。Other 要求清楚时直接执行，只有缺少必要信息或不受现有工具支持时再说明和澄清，不擅自退回常用格式。
 
@@ -43,15 +43,35 @@
 
 如果环境提供 Documents 和 PDF 相关技能，按当前可用的技能说明编辑、渲染和检查；按环境提供的依赖工具定位运行时，不写死本机安装路径。缺少转换工具时不要声称 DOCX 已经生成或验证 PDF。
 
+Windows 上若装了 Word，DOCX 导出 PDF 可以自动完成，不需要手工打开 Word：用 `win32com.client` 调 `Word.Application`，设为不可见并抑制对话框后 `Documents.Open` + `ExportAsFixedFormat`，读完 `wdStatisticPages` 再关闭退出。已实测可行。**没有 LibreOffice 时这是唯一的自动化路径**，`soffice --headless` 之类的方法在这类机器上不可用；先探测再决定，不要假定装了 LibreOffice。
+
 ## LaTeX
 
 保留已有工程的文档类、宏包和构建方式，除非它们妨碍本次要求。新工程采用与语言及模板匹配的引擎；核对中文字体和数学字体可用性。真实编译并检查缺图、缺引用、越界和字体问题。
 
 如使用仅支持独立文档的内置编译器，先核对其限制；包含多文件、图片或文献库的工程需要支持对应资源的编译方式。预览成功与可导出交付 PDF 分别确认。
 
+多文件工程已实测（MiKTeX 26.5 / XeTeX）：`\input{sections/…}` 分节、`\graphicspath{{figures/}}` 把图放子目录、`biblatex` + `biber`（`backend=biber, style=numeric, sorting=none`）配同级 `refs.bib`，全部正常，引用解析为 [1][2][3] 且文末生成参考文献。**用 `latexmk -xelatex main.tex` 一条命令跑完整个序列**（含 biber 和多次交叉引用），比手工按顺序调 xelatex/biber/xelatex/xelatex 可靠——漏跑一轮就会出现 `undefined references`，而那是中间态、不是真的错误。
+
+用 ctex 系列文档类写中文报告时，以下四点已实测：
+
+- **字号不能照搬英文惯例。** `\documentclass[a4paper,10.5pt]{ctexart}` 里的 `10.5pt` 会被静默忽略，只在日志里留一条 `Unused global option(s)`。ctex 的 `zihao` 选项**只接受三个值**：`5`（五号，10.5 pt）、`-4`（小四，12 pt）、`false`。写法是正号 `zihao=5`，不是 `-5`；写成 `-5` 会直接报错。要其他字号（如小五 9 pt）得用 `zihao=false` 再加 `\zihao{-5}` 命令。
+- **中文没有可用的斜体字形。** 日志会出现 `Font shape 'TU/…/m/sl' undefined`，然后静默退化成正体。`\emph{}` 对中文等于没写。强调中文用粗体，斜体只留给英文和变量。
+- **LaTeX 比 Typst 占页数。** 同一份内容（标题、一段中英混排、一个编号公式、一张图、一张表、一个结论）在 Typst 下 1 页，在 ctexart 下 2 页，第 2 页只有一行结论加约 20 cm 空白。原因是 `[htbp]` 浮动体的落位和章节间距。顺带注意 ctexart 默认带章节名页眉，无模板场景下若不需要，用 `\pagestyle{plain}` 关掉。
+- **浮动体是页数杀手，靠参数调不好。** 实测一份「正文引用图 1 + 一张跨页长表」的报告：默认 `[htbp]` 下正文第 1 页写着「如图 1 所示」，图却漂到第 3 页，而且**落在 `\printbibliography` 之后的参考文献标题下面**。三种常见修法都试过——`float` 包的 `[H]` 能把图钉近引用处，但会多出一页并在前页留下半页空白；`placeins` 的 `\FloatBarrier` 没有帮助；`\usepackage{caption}` 加 `longtable`、`booktabs` 本身没有问题，`\caption{…}\label{…}\\` 后接 `\toprule` 是可用写法。真正有效的是**缩小图**：13.8 cm 改 8 cm 后，题注回到第 1 页、页数不变、也不再侵入参考文献页。这与 [官方模板说明](official-template.md) 里 DOCX 场景的结论一致——页数受限时不要指望浮动体参数，先减内容。
+
 ## Typst
 
 保留用户现有项目和风格。环境提供 typst-author 技能时按需读取；使用当前可用编译器，核对字体、导入和包依赖。实际编译后检查公式、图表引用、分页和缺字。不要未经验证地宣称由 DOCX 重建的模板与原件完全一致。
+
+中英混排已实测（Typst 0.15.1）：把字体写成逐字形回退的列表即可，如
+`#set text(font: ("Times New Roman", "Microsoft YaHei"))`，拉丁用 Times、汉字落到雅黑，
+数学由内置 `NewCMMath` 承担，导出时三个字体族全部嵌入。中文、公式、图表题注、表中文字都正常，不需要额外的中文宏包。同一内容 Typst 比 ctexart 紧凑（见上节页数对比）。
+
+参考文献也已实测：`#bibliography("refs.bib", style: "ieee", title: "参考文献")` 配正文里的 `@key` 即可，
+无需外部工具链，引用解析为 [1][2][3] 并自动生成文末列表。**但要注意 `ieee` 这个 CSL 样式会按文档语言本地化**：
+实测输出是「3 版」「卷 61, 期 6, 页 692--702」并用《》包期刊名，而不是英文 IEEE 的 "3rd ed." / "vol. 61, no. 6, pp. 692--702"。
+课程若严格要求英文 IEEE 版式，不能只看 style 名字就叫 ieee，要核对渲染结果，必要时换用其他 CSL 文件。
 
 ## 交付内容
 
