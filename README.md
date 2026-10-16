@@ -11,11 +11,14 @@
 | 选择 | 选项 |
 |---|---|
 | 模板 | 电子系官方模板 / 其他指定模板 / 不使用模板 |
+| 课程或项目名称 | 显示在页眉的课程名或项目名；用官方模板时必问 |
 | 正文语言 | 中文 / 英文 |
 | 工作模式 | 排版 / 撰写 / 全局 |
 | 交付格式 | 仅 PDF / PDF + Word / PDF + LaTeX / PDF + Typst / Other（自行输入） |
 
 可编辑源文件是可选交付物。Other 可填写其他格式或组合；如果交互工具已提供自由输入入口，直接使用该入口。
+
+页眉放课程名、标题只写实验或项目名，课程信息不在两处重复。
 
 ### 三种模式
 
@@ -57,7 +60,7 @@ git clone https://github.com/pussiecatcat/sustech-ee-lab-report.git (Join-Path $
 | [assets/official-template.docx](assets/official-template.docx) | 可选的官方 Word 模板原件 |
 | [references/analysis-and-writing.md](references/analysis-and-writing.md) | 数据处理、计算、绘图和写作方法 |
 | [references/layout-and-output.md](references/layout-and-output.md) | 交付选择与 Word、LaTeX、Typst 工作路径 |
-| [references/official-template.md](references/official-template.md) | 模板已核对的结构及适配方式 |
+| [references/official-template.md](references/official-template.md) | 模板结构、正文嵌在单元格里带来的排版行为、页眉与标题分工、适配方式 |
 | [references/reference-lessons.md](references/reference-lessons.md) | 从历史报告提炼的可借鉴方法及来源链接 |
 | [references/final-check.md](references/final-check.md) | 内容、结果、实际页面和交付文件检查 |
 
@@ -65,7 +68,12 @@ git clone https://github.com/pussiecatcat/sustech-ee-lab-report.git (Join-Path $
 
 技能提供工作指引和模板资源，不内置 Word、LaTeX、Typst 编译器。具体生成能力依赖运行环境中的文档处理工具、字体、依赖和权限。使用时检查对应工具，并实际编译或导出、查看最终页面。
 
-技能结构、资源链接和官方模板副本完整性已检查。当前版本尚未完成三种输出路径的完整报告端到端试跑；模板的文本和 OOXML 结构已核对，但尚未完成原件的独立页面渲染。
+技能结构、资源链接和官方模板副本完整性已检查。2026 年 10 月 16 日以 EE323 Lab 2（离散时间系统）的真实材料完成了一次端到端试跑：从指导书和原始数据出发，经 MATLAB 计算与绘图、撰写、官方模板排版，到用 Word 导出 PDF 并逐页检查，产出 13 页英文报告。这次试跑验证了「官方模板 → Word → PDF」这条路径，并把两条实测结论写回了技能本身：
+
+- 官方模板把整篇正文放在一个跨列的合并单元格里，Word 在该结构中不遵守 `w:tblHeader` 与 `w:keepNext`，会带来表头不重复、标题留在页脚、表格从表头后断开等问题；成因、对策与「不要用硬分页修」的理由见 [references/official-template.md](references/official-template.md)。
+- 图的可读性必须按印制尺寸核算，不能只看源图是否清晰：半栏插入 7 in 宽的源图，等效字号只有 3 pt 左右；核算公式与重画源图的取舍见 [references/analysis-and-writing.md](references/analysis-and-writing.md)。
+
+LaTeX 与 Typst 两条输出路径尚未做端到端试跑。
 
 ## 参考资料
 
