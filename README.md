@@ -37,19 +37,19 @@
 
 ## 安装
 
-本仓库根目录就是技能目录，包含 `SKILL.md`、`agents/`、`references/` 和 `assets/`。将整个仓库放入个人技能目录，文件夹名称保持为 `sustech-ee-lab-report`。
+本仓库根目录就是技能目录，包含 `SKILL.md`、`agents/`、`references/` 和 `assets/`。将整个仓库放入个人技能目录，**文件夹名称保持为 `sustech-ee-lab-report`（全小写）**——仓库名是 `SUSTech-EE-Lab-Report`，但技能标识符必须是小写 kebab-case，目录名与 `SKILL.md` 里的 `name` 不一致会导致技能无法加载。下面的命令已经显式指定了目标目录，`git clone` 不会按仓库名自动建目录。
 
 **Claude Code**（技能目录 `~/.claude/skills`），调用语法为 `/sustech-ee-lab-report`：
 
 ```powershell
-git clone https://github.com/pussiecatcat/sustech-ee-lab-report.git (Join-Path $env:USERPROFILE '.claude\skills\sustech-ee-lab-report')
+git clone https://github.com/pussiecatcat/SUSTech-EE-Lab-Report.git (Join-Path $env:USERPROFILE '.claude\skills\sustech-ee-lab-report')
 ```
 
 **Codex**（技能目录 `~/.codex/skills`），调用语法为 `$sustech-ee-lab-report`：
 
 ```powershell
 $skillRoot = if ($env:CODEX_HOME) { Join-Path $env:CODEX_HOME 'skills' } else { Join-Path $env:USERPROFILE '.codex\skills' }
-git clone https://github.com/pussiecatcat/sustech-ee-lab-report.git (Join-Path $skillRoot 'sustech-ee-lab-report')
+git clone https://github.com/pussiecatcat/SUSTech-EE-Lab-Report.git (Join-Path $skillRoot 'sustech-ee-lab-report')
 ```
 
 `agents/openai.yaml`（技能展示名称与默认调用提示）只被 Codex 读取；在 Claude Code 下该文件不起作用，保留无害。其余文件两个环境通用，`SKILL.md` 的 frontmatter 只使用 `name`、`description` 和 `allowed-tools`，三者在两边都有效。
